@@ -10,7 +10,8 @@ class dbInterface
 {
     private static $instance = NULL;
     private $dbConn;
-    private $table = 'logtable';
+
+    private $projectsList = 'projects';
 
     private function __construct() {
         $dbServer = "***REMOVED***";
@@ -20,12 +21,23 @@ class dbInterface
         try {
             $this->dbConn = new PDO("mysql:host=$dbServer;dbname=$dbName", $dbUser, $dbPasswd);
             $this->dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->assertTable();
+            $this->assertTable($this->projectsList);
         }
         catch(PDOException $e){
             echo "Connection failed: " . $e->getMessage();
             die();
         }
+    }
+
+    private function assertTable ($table) {
+        $stmt = "CREATE TABLE IF NOT EXISTS " . $table . " (
+              id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+              log_date TIMESTAMP,
+              log_data LONGTEXT NOT NULL) 
+              CHARACTER SET utf8
+              COLLATE utf8_unicode_ci ";
+        $query = $this->dbConn->prepare($stmt);
+        $query->execute();
     }
 
     public static function getInstance() {
@@ -36,18 +48,9 @@ class dbInterface
         return $instance;
     }
 
-    private function assertTable () {
-        $stmt = "CREATE TABLE IF NOT EXISTS " . $this->table . " (
-              id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-              log_date TIMESTAMP,
-              log_data LONGTEXT NOT NULL) 
-              CHARACTER SET utf8
-              COLLATE utf8_unicode_ci ";
-        $query = $this->dbConn->prepare($stmt);
-        $query->execute();
-    }
+    public function logData($table, $data) {
+        $this->assertTable($table);
 
-    public function logData($data) {
         $stmt = "INSERT INTO " . $this->table . " (log_data) VALUES (:data)";
 
         $query = $this->dbConn->prepare($stmt);
@@ -56,7 +59,8 @@ class dbInterface
         $query->execute();
     }
 
-    public function logHistory() {
+    public function logHistory($table) {
+        $this->assertTable($table);
         $query = $this->dbConn->prepare("SELECT log_date, log_data FROM " . $this->table);
         $query->execute();
         $query->setFetchMode(PDO::FETCH_ASSOC);
