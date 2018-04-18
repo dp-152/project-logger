@@ -25,6 +25,7 @@ $html->wrapHeader(strtoupper($_SESSION[ 'table' ]) . " - NEW LOG ENTRY");
     <input id="submit" type="submit" value="SUBMIT">
 </form>
 <div class="buttons">
-    <a href="index.php" class="btn green">RETURN TO PREVIOUS PAGE</a>
+    <a href="index.php" class="btn green">GO TO HOME PAGE</a>
+    <a href="log-history.php" class="btn red">VIEW LOG HISTORY</a>
 </div>
 <?php $html->wrapFooter(); ?>

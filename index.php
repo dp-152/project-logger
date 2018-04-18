@@ -25,7 +25,7 @@ $projects = $db->pullProjects();
             <td class="text-center"><h2><?php echo $line[ 'proj_name' ] ?></h2></td>
             <td class="text-center">
                 <button form="log-entry" value="<?php echo $line[ 'proj_name' ] ?>" name="table_name" class="btn blue">NEW ENTRY</button>
-                <button form="log-history" value="<?php echo $line[ 'proj_name' ] ?>" name="table_name" class="btn blue">VIEW HISTORY</button>
+                <button form="log-history" value="<?php echo $line[ 'proj_name' ] ?>" name="table_name" class="btn red">VIEW HISTORY</button>
             </td>
         </tr>
     <?php } ?>
