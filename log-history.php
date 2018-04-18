@@ -6,12 +6,18 @@
  * Time: 10:32
  */
 
-require_once 'dbinterface.php';
+require_once "dbinterface.php";
 require_once "htmlwrapper.php";
+
+session_start();
 
 $db = dbInterface::getInstance();
 
-$logHistory = $db->logHistory();
+if ($_POST != NULL){
+    $_SESSION[ 'table' ] = $_POST[ 'table_name' ];
+}
+
+$logHistory = $db->pullLog($_SESSION[ 'table' ]);
 
 class TableRows extends RecursiveIteratorIterator {
     function __construct($it) {
@@ -32,7 +38,7 @@ class TableRows extends RecursiveIteratorIterator {
 }
 
 $html = new htmlWrapper();
-$html->wrapHeader("LOG HISTORY");
+$html->wrapHeader(strtoupper($_SESSION[ 'table' ]) . " - LOG HISTORY");
 ?>
 <table class="table-fill">
     <thead>

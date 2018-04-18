@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: mzalm
  * Date: 2018/04/18
- * Time: 10:33
+ * Time: 16:36
  */
 
 require_once "dbinterface.php";
@@ -11,7 +11,6 @@ require_once "dbinterface.php";
 session_start();
 
 $db = dbInterface::getInstance();
-$db->makeLog( $_SESSION[ 'table' ], $_POST['log_data']);
+$db->makeProject($_POST[ 'new_project' ]);
 
-header('Location: log-history.php');
-
+header('Location: index.php');

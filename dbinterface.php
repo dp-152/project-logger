@@ -10,32 +10,29 @@ class dbInterface
 {
     private static $instance = NULL;
     private $dbConn;
-
     private $projectsList = 'projects';
+    private $logFields = "id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, log_date TIMESTAMP, log_data LONGTEXT NOT NULL";
+    private $projectsListFields = "id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, proj_name VARCHAR(30) NOT NULL";
 
     private function __construct() {
         $dbServer = "***REMOVED***";
         $dbUser = "***REMOVED***";
         $dbPasswd = "***REMOVED***";
         $dbName = "***REMOVED***";
+
         try {
             $this->dbConn = new PDO("mysql:host=$dbServer;dbname=$dbName", $dbUser, $dbPasswd);
             $this->dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->assertTable($this->projectsList);
         }
         catch(PDOException $e){
             echo "Connection failed: " . $e->getMessage();
             die();
         }
+        $this->assertTable($this->projectsList, $this->projectsListFields);
     }
 
-    private function assertTable ($table) {
-        $stmt = "CREATE TABLE IF NOT EXISTS " . $table . " (
-              id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-              log_date TIMESTAMP,
-              log_data LONGTEXT NOT NULL) 
-              CHARACTER SET utf8
-              COLLATE utf8_unicode_ci ";
+    private function assertTable ($name, $fields) {
+        $stmt = "CREATE TABLE IF NOT EXISTS " . $name . " ( " . $fields . " ) CHARACTER SET utf8 COLLATE utf8_unicode_ci";
         $query = $this->dbConn->prepare($stmt);
         $query->execute();
     }
@@ -48,10 +45,10 @@ class dbInterface
         return $instance;
     }
 
-    public function logData($table, $data) {
-        $this->assertTable($table);
+    public function makeLog($table, $data) {
+        $this->assertTable($table, $this->logFields);
 
-        $stmt = "INSERT INTO " . $this->table . " (log_data) VALUES (:data)";
+        $stmt = "INSERT INTO " . $table . " (log_data) VALUES (:data)";
 
         $query = $this->dbConn->prepare($stmt);
         $query->bindParam(':data',$data );
@@ -59,9 +56,33 @@ class dbInterface
         $query->execute();
     }
 
-    public function logHistory($table) {
-        $this->assertTable($table);
-        $query = $this->dbConn->prepare("SELECT log_date, log_data FROM " . $this->table);
+    public function pullLog($table) {
+        $this->assertTable($table, $this->logFields);
+
+        $query = $this->dbConn->prepare("SELECT log_date, log_data FROM " . $table);
+        $query->execute();
+        $query->setFetchMode(PDO::FETCH_ASSOC);
+
+        $result = $query->fetchAll();
+        return $result;
+    }
+
+    public function makeProject($project) {
+        $this->assertTable($this->projectsList, $this->projectsListFields);
+
+        $stmt = "INSERT INTO " . $this->projectsList . " (proj_name) VALUES (:data)";
+
+        $query = $this->dbConn->prepare($stmt);
+        $query->bindParam(':data', $project);
+        $query->execute();
+
+        $this->assertTable($project, $this->logFields);
+    }
+
+    public function pullProjects() {
+        $this->assertTable($this->projectsList, $this->projectsListFields);
+
+        $query = $this->dbConn->prepare("SELECT proj_name FROM " . $this->projectsList);
         $query->execute();
         $query->setFetchMode(PDO::FETCH_ASSOC);
 
