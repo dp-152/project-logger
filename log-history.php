@@ -10,14 +10,18 @@ require_once "dbinterface.php";
 require_once "htmlwrapper.php";
 
 session_start();
-if ($_SESSION[ 'table' ] == NULL) header('Location: index.php');
 
-$db = dbInterface::getInstance();
-
-if ($_POST != NULL) {
+if ($_POST == NULL || $_POST[ 'table_name' ] == NULL) {
+    if ($_SESSION == NULL || $_SESSION[ 'table' ] == NULL) {
+        header('Location: index.php');
+        die();
+    }
+}
+else {
     $_SESSION[ 'table' ] = $_POST[ 'table_name' ];
 }
 
+$db = dbInterface::getInstance();
 $logHistory = $db->pullLog($_SESSION[ 'table' ]);
 
 class TableRows extends RecursiveIteratorIterator {
