@@ -13,21 +13,17 @@ session_start();
 
 $html = new htmlWrapper();
 
-if ($_POST == NULL || $_POST[ 'table_name' ] == NULL) {
-    if ($_SESSION == NULL || $_SESSION[ 'table' ] == NULL) {
-        header('Location: index.php');
-        die();
-    }
-}
-else {
-    $_SESSION[ 'table' ] = $_POST[ 'table_name' ];
+if ($_SESSION == NULL || $_SESSION[ 'table' ] == NULL) {
+    header('Location: index.php');
+    die();
 }
 
 $html->wrapHeader(strtoupper($_SESSION[ 'table' ]) . " - NEW LOG ENTRY");
 
 ?>
-<form class="topBefore" id="form" action="submit-log.php" method="post">
-    <textarea id="message" name="log_data" placeholder="LOG ENTRY"></textarea>
+<form class="topBefore" id="form" action="post-handler.php" method="post">
+    <input type="radio" name="method" value="submit-log" checked hidden />
+    <textarea id="message" name="log-entry" placeholder="LOG ENTRY"></textarea>
     <input id="submit" type="submit" value="SUBMIT">
 </form>
 <div class="buttons">

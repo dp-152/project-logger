@@ -79,6 +79,21 @@ class dbInterface
         $this->assertTable($project, $this->logFields);
     }
 
+    public function killProject($project) {
+        $this->assertTable($this->projectsList, $this->projectsListFields);
+
+        $stmt = "DROP TABLE " . $project;
+
+        $query = $this->dbConn->prepare($stmt);
+        $query->execute();
+
+        $stmt = "DELETE FROM " . $this->projectsList . " WHERE proj_name=:project";
+
+        $query = $this->dbConn->prepare($stmt);
+        $query->bindParam(':project', $project);
+        $query->execute();
+    }
+
     public function pullProjects() {
         $this->assertTable($this->projectsList, $this->projectsListFields);
 

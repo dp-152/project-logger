@@ -12,11 +12,9 @@ $projects = $db->pullProjects();
 
 ?>
 <div class="buttons">
-    <form action="new-entry.php" id="log-entry" method="post" hidden></form>
-    <form action="log-history.php" id="log-history" method="post" hidden></form>
-
-    <form class="topBefore" action="make-project.php" id="new-project" method="post">
-        <input type="text" name="new_project" /><br>
+    <form class="topBefore" action="post-handler.php" id="make-project" method="post">
+        <input type="radio" name="method" value="make-project" checked hidden />
+        <input type="text" name="project-name" /><br>
         <input type="submit" id="submit" value="CREATE PROJECT" />
     </form>
     <table class="table-fill">
@@ -24,8 +22,12 @@ $projects = $db->pullProjects();
         <tr>
             <td class="text-center"><h2><?php echo $line[ 'proj_name' ] ?></h2></td>
             <td class="text-center">
-                <button form="log-entry" value="<?php echo $line[ 'proj_name' ] ?>" name="table_name" class="btn blue">NEW ENTRY</button>
-                <button form="log-history" value="<?php echo $line[ 'proj_name' ] ?>" name="table_name" class="btn red">VIEW HISTORY</button>
+                <form action="post-handler.php" id="<?php echo $line[ 'proj_name' ] ?>" method="post">
+                    <input type="radio" name="table" value="<?php echo $line[ 'proj_name' ] ?>" checked hidden>
+                    <button value="page-new-entry" name="method" class="btn blue">NEW ENTRY</button>
+                    <button value="page-history" name="method" class="btn green">VIEW HISTORY</button>
+                    <button value="kill-project" name="method" class="btn red">DELETE PROJECT</button>
+                </form>
             </td>
         </tr>
     <?php } ?>

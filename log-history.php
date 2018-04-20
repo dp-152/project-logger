@@ -11,36 +11,13 @@ require_once "htmlwrapper.php";
 
 session_start();
 
-if ($_POST == NULL || $_POST[ 'table_name' ] == NULL) {
-    if ($_SESSION == NULL || $_SESSION[ 'table' ] == NULL) {
-        header('Location: index.php');
-        die();
-    }
-}
-else {
-    $_SESSION[ 'table' ] = $_POST[ 'table_name' ];
+if ($_SESSION == NULL || $_SESSION[ 'table' ] == NULL) {
+    header('Location: index.php');
+    die();
 }
 
 $db = dbInterface::getInstance();
 $logHistory = $db->pullLog($_SESSION[ 'table' ]);
-
-class TableRows extends RecursiveIteratorIterator {
-    function __construct($it) {
-        parent::__construct($it, self::LEAVES_ONLY);
-    }
-
-    function current() {
-        return "<td class='text-left'>" . parent::current(). "</td>";
-    }
-
-    function beginChildren() {
-        echo "<tr>";
-    }
-
-    function endChildren() {
-        echo "</tr>" . "\n";
-    }
-}
 
 $html = new htmlWrapper();
 $html->wrapHeader(strtoupper($_SESSION[ 'table' ]) . " - LOG HISTORY");
@@ -54,10 +31,12 @@ $html->wrapHeader(strtoupper($_SESSION[ 'table' ]) . " - LOG HISTORY");
     </thead>
     <tbody class="table-hover">
     <?php
-    foreach(new TableRows(new RecursiveArrayIterator($logHistory)) as $k=>$v) {
-        echo $v;
-    }
-    ?>
+    foreach ($logHistory as $line) { ?>
+        <tr>
+            <td class="text-left"><?php echo $line[ 'log_date' ] ?></td>
+            <td class="text-left"><?php echo $line[ 'log_data' ] ?></td>
+        </tr>
+    <?php } ?>
     </tbody>
 </table>
 <div class="buttons">
