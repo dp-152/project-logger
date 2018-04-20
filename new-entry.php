@@ -6,7 +6,6 @@
  * Time: 10:32
  */
 
-require_once "dbinterface.php";
 require_once "htmlwrapper.php";
 
 session_start();
