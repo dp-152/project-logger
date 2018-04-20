@@ -5,6 +5,7 @@
  * Date: 2018/04/18
  * Time: 9:41
  */
+include "dbconfig.php";
 
 class dbInterface
 {
@@ -15,13 +16,9 @@ class dbInterface
     private $projectsListFields = "id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, proj_name VARCHAR(30) NOT NULL";
 
     private function __construct() {
-        $dbServer = "***REMOVED***";
-        $dbUser = "***REMOVED***";
-        $dbPasswd = "***REMOVED***";
-        $dbName = "***REMOVED***";
 
         try {
-            $this->dbConn = new PDO("mysql:host=$dbServer;dbname=$dbName", $dbUser, $dbPasswd);
+            $this->dbConn = new PDO("mysql:host=". DB_SERVER . ";dbname=" . DB_NAME, DB_USER, DB_PASSWD);
             $this->dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
         catch(PDOException $e){
