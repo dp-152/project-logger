@@ -5,7 +5,7 @@
  * Date: 2018/04/18
  * Time: 9:41
  */
-include "dbconfig.php";
+require_once "dbconfig.php";
 
 class dbInterface
 {
